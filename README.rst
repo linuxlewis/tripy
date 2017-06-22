@@ -1,5 +1,7 @@
 tripy
 -----
+.. image:: https://travis-ci.org/linuxlewis/tripy.svg?branch=master
+    :target: https://travis-ci.org/linuxlewis/tripy
 
 Tripy is a simple module with one purpose: triangulating polygons.
 
