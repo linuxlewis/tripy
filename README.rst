@@ -24,6 +24,12 @@ Getting Started
     [((1, 0), (0, 1), (-1, 0)), ((1, 0), (-1, 0), (0, -1))]
 
 
+Examples
+--------
+
+To see examples of tripy in action check out the jupyter notebook ``examples.ipynb``
+
+
 Roadmap
 -------
 
