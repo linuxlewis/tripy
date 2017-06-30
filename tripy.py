@@ -36,7 +36,7 @@ def earclip(polygon):
         next_index = (i + 1) % point_count
         next_point = polygon[next_index]
 
-        if  _is_ear(prev_point, point, next_point, polygon):
+        if _is_ear(prev_point, point, next_point, polygon):
             ear_vertex.append(point)
 
     while ear_vertex and point_count >= 3:
@@ -108,7 +108,8 @@ def _is_point_inside(p, a, b, c):
 
 
 def _triangle_area(x1, y1, x2, y2, x3, y3):
-    return abs((x1*(y2-y3) + x2*(y3-y1)+ x3*(y1-y2))/2.0)
+    return abs((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2.0)
+
 
 def _triangle_sum(x1, y1, x2, y2, x3, y3):
-    return x1*(y3-y2) + x2*(y1-y3)+ x3*(y2-y1)
+    return x1 * (y3 - y2) + x2 * (y1 - y3) + x3 * (y2 - y1)
