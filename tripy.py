@@ -36,8 +36,7 @@ def earclip(polygon):
         next_index = (i + 1) % point_count
         next_point = polygon[next_index]
 
-        if  _is_ear(prev_point, point, next_point, polygon) and \
-                _triangle_area(prev_point.x, prev_point.y, point.x, point.y, next_point.x, next_point.y) > 0:
+        if  _is_ear(prev_point, point, next_point, polygon):
             ear_vertex.append(point)
 
     while ear_vertex and point_count >= 3:
@@ -56,13 +55,13 @@ def earclip(polygon):
             next_next_index = (i + 1) % point_count
             next_next_point = polygon[next_next_index]
 
-            for group in [
-                    (prev_prev_point, prev_point, next_point, polygon),
-                    (prev_point, next_point, next_next_point, polygon)
-                ]:
+            groups = [
+                (prev_prev_point, prev_point, next_point, polygon),
+                (prev_point, next_point, next_next_point, polygon)
+            ]
+            for group in groups:
                 p = group[1]
-                a = _triangle_area(group[0].x, group[0].y, p.x, p.y, group[2].x, group[2].y)
-                if _is_ear(*group) and a > 0:
+                if _is_ear(*group):
                     if p not in ear_vertex:
                         ear_vertex.append(p)
                 elif p in ear_vertex:
@@ -80,7 +79,18 @@ def _is_clockwise(polygon):
     return s > 0
 
 
+def _is_convex(prev, point, next):
+    return _triangle_sum(prev.x, prev.y, point.x, point.y, next.x, next.y) < 0
+
+
 def _is_ear(p1, p2, p3, polygon):
+    ear = _contains_no_points(p1, p2, p3, polygon) and \
+            _is_convex(p1, p2, p3) and \
+            _triangle_area(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y) > 0
+    return ear
+
+
+def _contains_no_points(p1, p2, p3, polygon):
     for pn in polygon:
         if pn in (p1, p2, p3):
             continue
@@ -99,3 +109,6 @@ def _is_point_inside(p, a, b, c):
 
 def _triangle_area(x1, y1, x2, y2, x3, y3):
     return abs((x1*(y2-y3) + x2*(y3-y1)+ x3*(y1-y2))/2.0)
+
+def _triangle_sum(x1, y1, x2, y2, x3, y3):
+    return x1*(y3-y2) + x2*(y1-y3)+ x3*(y2-y1)
