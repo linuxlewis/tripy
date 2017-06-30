@@ -76,7 +76,7 @@ def _is_clockwise(polygon):
     for i in range(polygon_count):
         point = polygon[i]
         point2 = polygon[(i + 1) % polygon_count]
-    s += (point2.x - point.x) * (point2.y - point.y)
+        s += (point2.x - point.x) * (point2.y + point.y)
     return s > 0
 
 
