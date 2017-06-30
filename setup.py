@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='tripy',
-    version='0.0.2',
+    version='0.0.3',
     url='https://github.com/linuxlewis/tripy',
     author='Sam Bolgert',
     author_email='sbolgert@gmail.com',
