@@ -1,6 +1,10 @@
+import math
+import sys
 from collections import namedtuple
 
 Point = namedtuple('Point', ['x', 'y'])
+
+EPSILON = math.sqrt(sys.float_info.epsilon)
 
 
 def earclip(polygon):
@@ -57,7 +61,7 @@ def earclip(polygon):
 
             groups = [
                 (prev_prev_point, prev_point, next_point, polygon),
-                (prev_point, next_point, next_next_point, polygon)
+                (prev_point, next_point, next_next_point, polygon),
             ]
             for group in groups:
                 p = group[1]
@@ -85,8 +89,8 @@ def _is_convex(prev, point, next):
 
 def _is_ear(p1, p2, p3, polygon):
     ear = _contains_no_points(p1, p2, p3, polygon) and \
-            _is_convex(p1, p2, p3) and \
-            _triangle_area(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y) > 0
+        _is_convex(p1, p2, p3) and \
+        _triangle_area(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y) > 0
     return ear
 
 
@@ -104,7 +108,8 @@ def _is_point_inside(p, a, b, c):
     area1 = _triangle_area(p.x, p.y, b.x, b.y, c.x, c.y)
     area2 = _triangle_area(p.x, p.y, a.x, a.y, c.x, c.y)
     area3 = _triangle_area(p.x, p.y, a.x, a.y, b.x, b.y)
-    return area == sum([area1, area2, area3])
+    areadiff = abs(area - sum([area1, area2, area3])) < EPSILON
+    return areadiff
 
 
 def _triangle_area(x1, y1, x2, y2, x3, y3):
@@ -113,3 +118,27 @@ def _triangle_area(x1, y1, x2, y2, x3, y3):
 
 def _triangle_sum(x1, y1, x2, y2, x3, y3):
     return x1 * (y3 - y2) + x2 * (y1 - y3) + x3 * (y2 - y1)
+
+
+def calculate_total_area(triangles):
+    result = []
+    for triangle in triangles:
+        sides = []
+        for i in range(3):
+            next_index = (i + 1) % 3
+            pt = triangle[i]
+            pt2 = triangle[next_index]
+            # Distance between two points
+            side = math.sqrt(math.pow(pt2[0] - pt[0], 2) + math.pow(pt2[1] - pt[1], 2))
+            sides.append(side)
+        # Heron's numerically stable forumla for area of a triangle:
+        # https://en.wikipedia.org/wiki/Heron%27s_formula
+        # However, for line-like triangles of zero area this formula can produce an infinitesimally negative value
+        # as an input to sqrt() due to the cumulative arithmetic errors inherent to floating point calculations:
+        # https://people.eecs.berkeley.edu/~wkahan/Triangle.pdf
+        # For this purpose, abs() is used as a reasonable guard against this condition.
+        c, b, a = sorted(sides)
+        area = .25 * math.sqrt(abs((a + (b + c)) * (c - (a - b)) * (c + (a - b)) * (a + (b - c))))
+        result.append((area, a, b, c))
+    triangle_area = sum(tri[0] for tri in result)
+    return triangle_area
